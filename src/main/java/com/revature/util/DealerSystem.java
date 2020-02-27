@@ -16,8 +16,10 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 import com.revature.dao.CarDAOImpl;
+import com.revature.dao.OfferDAOImpl;
 import com.revature.dao.SerializationDAO;
-import com.revature.driver.Driver;
+import com.revature.dao.UserDaoPostgres;
+import com.revature.driver.DealerDriver;
 import com.revature.org.Car;
 import com.revature.org.Customer;
 import com.revature.org.Employee;
@@ -34,6 +36,10 @@ public class DealerSystem implements Serializable {
 	/**
 	 * 
 	 */
+	final int CUSTOMER = 1;
+	final int EMPLOYEE = 2;
+	final int EXIT = 0;
+
 	CarDAOImpl cdi;
 	private static final long serialVersionUID = -6973336632711654326L;
 	public static Logger log;
@@ -45,24 +51,29 @@ public class DealerSystem implements Serializable {
 	public static HashMap<User, String> passwords;
 	//public static HashMap<User, Boolean> active;
 	public static ArrayList<Offer> offers;
-	//public static SerializationDAO s;
+	public static SerializationDAO s;
 	public User employee;
+	private OfferDAOImpl odi;
+	private UserDaoPostgres udi;
 	
 	public DealerSystem() {
 		cdi = new CarDAOImpl();
-		//s = new SerializationDAO();
+		odi = new OfferDAOImpl();
+		udi = new UserDaoPostgres();
+		
+		s = new SerializationDAO();
 		log = Logger.getLogger(DealerSystem.class);
 		in = new Scanner(System.in);
 		go = true;
 		input = null;
-		//lot = s.deSerialCars();
+		lot = new Lot();
 		if(usernames == null) usernames = new HashMap<String, User>();
 		else {
-//			s.serialUnames();
+			s.serialUnames();
 			addUser(new Employee(), "TheBest", "password"); // User type, username, password
 		}
 		if(passwords == null) passwords = new HashMap<User, String>();
-//		else s.serialPsswds();
+		else s.serialPsswds();
 //		if(active == null) active = new HashMap<User, Boolean>();
 //		else s.serialActive();
 		if(offers == null) offers = new ArrayList<Offer>();
@@ -81,32 +92,29 @@ public class DealerSystem implements Serializable {
 
 	public void go() {
 		while(go) {
-			final int CUSTOMER = 1;
-			final int EMPLOYEE = 2;
-			final int EXIT = 0;
 			String greeting = "Input 1 for Customer menu, 2 for employee menu, "
-					+ "or, at any time, 0 for the main menu: ";
+					+ "\nor, at any time, 0 for the main menu: ";
 			System.out.print(greeting);
 //			log.info("Msg: " + greeting);
 			input = in.nextLine();
 			System.out.println();
 //			log.info("Input" + input);
-			switch(Integer.parseInt(input)) {
+			int menuSel = Integer.parseInt(input);
+			switch(menuSel) {
 			case EXIT:
 				go = false;
 				break;
 			case CUSTOMER:
-				customerMenu();
+				menuSel = Integer.parseInt(customerMenu());
 				break;
 			case EMPLOYEE:
-				employeeMenu();
-				
+				menuSel = Integer.parseInt(employeeMenu());
 			}
 		}
 		System.out.println("Goodbye!!!");
 	}
 
-	private void employeeMenu() {
+	private String employeeMenu() {
 		String emGreeting = "Employee menu";
 		System.out.println(emGreeting);
 //		log.info(emGreeting + " entered.");
@@ -121,9 +129,9 @@ public class DealerSystem implements Serializable {
 			}
 			boolean validInput = false;
 			while(!validInput) {
-				System.out.println("Here are the following options:");
+				System.out.println("\nYou have the following options:");
 				System.out.print("1 to manage lot inventory, 2 to manage offers, 3 to"
-						+ " view payments, \nand as always, 0 to logout and exit the system: ");
+						+ " \nview payments, \nand as always, 0 to logout and exit the system: ");
 				input = in.nextLine();
 				if(Integer.parseInt(input) == 0 | Integer.parseInt(input) == 1 
 						| Integer.parseInt(input) == 2) validInput = true;
@@ -137,13 +145,14 @@ public class DealerSystem implements Serializable {
 			if(Integer.parseInt(input) == 3) viewPayments();
 		}
 		System.out.println("Back");
+		return input;
 	}
 
 	private void viewPayments() {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	private void manageOffers() {
 		while(true) {
 			System.out.print("Manage offers: "); System.out.println("Input 1 to accept, 2 to reject, or 3 for next offer: ");
@@ -166,22 +175,22 @@ public class DealerSystem implements Serializable {
 			}
 		}
 	}
-
+	
 	private int nextOffer(int currentOffer) {
 		if(!(currentOffer < offers.size() - 1))
 		return currentOffer ++;
 		else return currentOffer = 0;
 	}
-
+	
 	private void rejectOffer(int currentOffer) {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 //	private void acceptOffer(int currentOffer) {
 //		
 //	}
-
+	
 	private void manageInventory() {
 		while(true) {
 			System.out.print("Input 1 to view inventory 2 to add a car to the lot, or 3 to remove: ");
@@ -192,7 +201,7 @@ public class DealerSystem implements Serializable {
 			if(Integer.parseInt(input) == 3) removeCar();
 		}
 	}
-
+	
 	private void viewInv() {
 //		lot = s.deSerialCars();
 		if(lot != null) {
@@ -204,9 +213,14 @@ public class DealerSystem implements Serializable {
 		} else if(lot == null) lot = new Lot();
 		else if(lot.isEmpty()) System.out.println("Lot empty!");
 	}
-
+	
 	private void removeCar() {
-		
+		System.out.print("What is the vin of the car do remove?");
+		input = in.nextLine();
+		if(Integer.parseInt(input) != 0) {
+			lot.remove(cdi.selectCarByVIN(input));
+			cdi.updateLot();
+		}
 	}
 
 	private void menuAddCar() {
@@ -216,12 +230,12 @@ public class DealerSystem implements Serializable {
 		String model = in.nextLine();
 		System.out.print("MSRP: $");
 		Price msrp = new Price(Integer.parseInt(in.nextLine()));
-		int vin = (int) Math.abs(1000000000 * Math.random());
-		Car car = new Car(make, model, vin);
-		cdi.insertCar(car); 
+		String vin = Double.toString(Math.abs((double)999999999 * Math.random()));
+		Car car = new Car(make, model, vin, msrp);
+		cdi.insertCar(car);
 		lot.put(car, msrp);
-		//s.createCar(car);
-		//s.serialCars(lot);
+		s.createCar(car);
+		s.serialCars(lot);
 		
 		
 	}
@@ -236,7 +250,7 @@ public class DealerSystem implements Serializable {
 //		return usernames.get(username);
 //	}
 
-	private void customerMenu() {
+	private String customerMenu() {
 		System.out.print("Customer menu\nInput 1 to login, or 2 to create a customer acount: ");
 		input = in.nextLine();
 		System.out.println();
@@ -267,6 +281,7 @@ public class DealerSystem implements Serializable {
 			System.out.println();
 			System.out.println();
 		}
+		return input;
 		
 	}
 

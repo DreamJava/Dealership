@@ -15,29 +15,46 @@ public class Car implements Serializable {
 	 */
 	private String make;
 	private String model;
-	private int vin;
+	private String vin;
+	private Price msrp;
 //	private double id;
 	Price chosenOffer;
 
 	HashMap<User, Price> offers;
 	
-	public Car(String make, String model) {
-		setName(make, model);
-		offers = new HashMap<User, Price>();
+//	public Car(String make, String model) {
+//		setName(make, model);
+//		offers = new HashMap<User, Price>();
 //		id = 100000000 * Math.random();
-		chosenOffer = null;
-	}
+//		chosenOffer = null;
+//	}
 	
-	public Car(String make, String model, int vin) {
+	public Car(String make, String model, Price msrp) {
 		setName(make, model);
 		setVIN(vin);
+		setMSRP(msrp);
 		offers = new HashMap<User, Price>();
-		//id = 100000000 * Math.random();
+		vin = (String) Double.toString(999999999 * Math.random());
 		chosenOffer = null;
 	}
 	
 	
-private void setVIN(int vin) {
+	private void setMSRP(Price msrp) {
+		this.msrp = msrp;
+	}
+
+
+	public Car(String make, String model, String vin, Price msrp) {
+		setName(make, model);
+		setVIN(vin);
+		setMSRP(msrp);
+		offers = new HashMap<User, Price>();
+		this.vin = vin;
+		chosenOffer = null;
+	}
+	
+	
+private void setVIN(String vin) {
 		// TODO Auto-generated method stub
 		this.vin = vin;
 	}
@@ -68,7 +85,13 @@ private void setVIN(int vin) {
 		return model;
 	}
 
-	public int getVin() {
+	public String getVin() {
 		return vin;
+	}
+
+
+	public Price getMSRP() {
+		// TODO Auto-generated method stub
+		return msrp;
 	}
 }

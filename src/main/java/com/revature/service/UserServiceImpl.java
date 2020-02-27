@@ -1,7 +1,6 @@
 package com.revature.service;
 
-import com.example.dao.UserDao;
-import com.example.dao.UserDaoPostgres;
+import com.revature.dao.*;
 import com.revature.model.User;
 
 public class UserServiceImpl implements UserService {
@@ -11,7 +10,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updatePassword(String username, String password) {
 		
-		uDao.createUser(new User(0, username, password));
+		//uDao.createUser(new User(, username, password));
 		
 	}
 

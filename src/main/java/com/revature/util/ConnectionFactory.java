@@ -27,10 +27,13 @@ public class ConnectionFactory {
 	
 	private ConnectionFactory() {
 		//private constructor helps make this a singleton
-		url = System.getenv("2002_POSTGRES_URL");
+		url = "localhost";
 		url = "jdbc:postgresql://"+url+":5432/postgres?";
-		username = System.getenv("2002_POSTGRES_USERNAME");
-		password = System.getenv("2002_POSTGRES_PASSWORD");
+		username = "postgres";
+		password = "postgres";
+		//url = System.getenv("2002_POSTGRES_URL");
+		//username = System.getenv("2002_POSTGRES_USERNAME");
+		//password = System.getenv("2002_POSTGRES_PASSWORD");
 	}
 	
 	private Connection createConnection() {

@@ -18,7 +18,7 @@ public class Owned extends HashMap<Car, Price> implements Serializable {
 	}
 
 	public void viewInv() {
-		DealerSystem.lot = DealerSystem.s.deSerialCars();
+		//DealerSystem.lot = DealerSystem.s.deSerialCars();
 		for(Entry<Car, Price>  car: this.entrySet()) 
 			System.out.println(car.getKey().getMake() + " " + 
 				car.getKey().getModel() + " $" + this.get(car.getKey()).getAmount());

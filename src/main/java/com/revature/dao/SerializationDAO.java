@@ -24,31 +24,31 @@ import com.revature.util.Lot;
 
 public class SerializationDAO {
 
-//	public void createCar(Car c) {
-//		String filename = c.getVin() + ".dat";
-//		FileOutputStream fos = null;
-//		ObjectOutputStream oos = null;
-//		try {
-//			fos = new FileOutputStream(filename);
-//			oos = new ObjectOutputStream(fos);
-//			oos.writeObject(c);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} finally {
-//			try {
-//				oos.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			try {
-//				fos.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+	public void createCar(Car c) {
+		String filename = c.getVin() + ".dat";
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		try {
+			fos = new FileOutputStream(filename);
+			oos = new ObjectOutputStream(fos);
+			oos.writeObject(c);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				oos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 
 	public void createCustomer(Customer c) {

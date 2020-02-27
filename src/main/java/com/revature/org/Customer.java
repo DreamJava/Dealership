@@ -38,7 +38,10 @@ public class Customer implements User {
 				String make = in.nextLine();
 				System.out.print("Please input model: ");
 				String model = in.nextLine();
-				owned.add(new Car(make, model));
+				System.out.print("Please input vin: ");
+				String vin = in.nextLine();
+				Price msrp = new Price(Integer.parseInt((in.nextLine())));
+				owned.add(new Car(make, model, vin, msrp));
 				System.out.println("Car added.");
 				System.out.println();
 				System.out.print("More to odd? (1 for yes, press enter for no");
@@ -55,7 +58,9 @@ public class Customer implements User {
 			String make = in.nextLine();
 			System.out.print("Model: ");
 			String model = in.nextLine();
-			offerCar = new Car(make, model);
+			System.out.println("Price: $");
+			Price price = new Price(Integer.parseInt(in.nextLine()));
+			offerCar = new Car(make, model, price);
 			if(DealerSystem.lot.containsKey(offerCar)){
 				System.out.println("How much is your offer for this car, with an msrp of " + DealerSystem.lot.get(offerCar) + "?");
 			}
